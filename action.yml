@@ -22,8 +22,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-		- name: 
-    - run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
+		- name: Starting
+      bash: shell
+      run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
 
     - name: Checkout Wiki
       uses: actions/checkout@v4
