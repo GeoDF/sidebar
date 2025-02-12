@@ -28,6 +28,14 @@ function isInList {
 
 while [ : ]; do
 	case "$1" in
+		-t | --title)
+			title="$2"
+			shift 2
+			;;
+		-f | --footer)
+			footer="$2"
+			shift 2
+			;;
 		-s | --size)
 			if isInList "$2" "1 2 3"; then
 				size="$2"
@@ -125,6 +133,9 @@ function submenu {
 	echo "- [$2]($link)"
 } 
 
+if [ "$title" ]; then
+	echo "$title"
+fi
 len_menu="${#menu[@]}"
 if [ $len_menu > 0 ]; then
 	if [ "$size" ]; then
@@ -153,6 +164,8 @@ if [ $len_menu > 0 ]; then
 else
 	echo "Empty wiki."
 fi
-
+if [ "$footer" ]; then
+	echo "$footer"
+fi
 
 
