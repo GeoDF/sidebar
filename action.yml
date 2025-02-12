@@ -26,10 +26,21 @@ runs:
       shell: bash
       run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
 
+    # ref: https://docs.github.com/en/actions/sharing-automations/creating-actions/creating-a-composite-action
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+        
     - name: Checkout Wiki
       uses: actions/checkout@v4
       with:
         repository: ${{github.repository}}.wiki
+
+    -name: Update sidebar
+      shell: bash
+      run: scripts/update_wiki_sidebar.sh --size=3 > _sidebar.md
 
     - name: Check
       shell: bash
