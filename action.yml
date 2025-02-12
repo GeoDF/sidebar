@@ -12,6 +12,9 @@ inputs:
   menu_title:
     description: "Menu title"
     required: false
+    menu_pages:
+      description: "Menu pages (1st level)"
+      required: false
   menu_footer:
     description: "Menu footer"
     required: false
