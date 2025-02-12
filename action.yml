@@ -22,7 +22,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-		- name: Starting
+    - name: Starting
       bash: shell
       run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
 
