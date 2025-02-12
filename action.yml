@@ -45,6 +45,8 @@ runs:
     - name: Commit the updated sidebar
       shell: bash
       run: |
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git add _sidebar.md
         git commit -m 'Updated by GeodF/sidebar action.'
         git push
