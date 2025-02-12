@@ -46,7 +46,7 @@ runs:
 
     - name: Update sidebar
       shell: bash
-      run: ${GITHUB_ACTION_PATH}/scripts/update_wiki_sidebar.sh --title=${{ inputs.menu_title }} --footer=${{ inputs.menu_footer }}  --size=${{ inputs.menu_size }} --color=${{ inputs.menu_color }} ${{ inputs.menu_pages }} } > _Sidebar.md
+      run: ${GITHUB_ACTION_PATH}/scripts/update_wiki_sidebar.sh --title="${{ inputs.menu_title }}" --footer="${{ inputs.menu_footer }}"  --size="${{ inputs.menu_size }}" --color="${{ inputs.menu_color }}" "${{ inputs.menu_pages }}" } > _Sidebar.md
 
     - name: Commit the updated sidebar
       shell: bash
