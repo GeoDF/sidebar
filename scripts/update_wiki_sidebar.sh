@@ -8,7 +8,7 @@
 #
 # if there is no pages as parameters, read pages from ".md" files not beginning by "_" in the working directory
 
-VALID_ARGS=$(getopt -o sc:d: --long size:,color: -- "$@")
+VALID_ARGS=$(getopt -o tfsc:d: --long title:,footer:size:,color: -- "$@")
 if [[ $? -ne 0 ]]; then
 	exit 1;
 fi
