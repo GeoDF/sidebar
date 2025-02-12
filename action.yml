@@ -19,22 +19,22 @@ inputs:
     description: "Color"
     required: false
 
+defaults:
+  run:
+    shell: bash
+
 runs:
   using: "composite"
   steps:
-    - name: Check runner OS
-      if: ${{ runner.os != 'Linux' }}
-      shell: bash
-
     - run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
 
-      - name: Checkout Wiki
-        uses: actions/checkout@v4
-        with:
-          repository: ${{github.repository}}.wiki
+    - name: Checkout Wiki
+      uses: actions/checkout@v4
+      with:
+        repository: ${{github.repository}}.wiki
 
-      - name: Check
-        run: |
-          ls 
+    - name: Check
+      run: |
+        ls
 
 
