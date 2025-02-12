@@ -34,17 +34,19 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
         
     - name: Checkout Wiki
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         repository: ${{github.repository}}.wiki
 
-    -name: Update sidebar
+    - name: Update sidebar
       shell: bash
       run: scripts/update_wiki_sidebar.sh --size=3 > _sidebar.md
 
-    - name: Check
+    - name: Commit the updated sidebar
       shell: bash
       run: |
-        ls
+        git add _sidebar.md
+        git commit -m 'Updated by GeodF/sidebar action.'
+        git push
 
 
