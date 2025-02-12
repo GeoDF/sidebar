@@ -8,12 +8,13 @@
 #
 # if there is no pages as parameters, read pages from ".md" files not beginning by "_" in the working directory
 
-VALID_ARGS=$(getopt -o tfsc:d: --long title:,footer:,size:,color: -- "$@")
+VALID_ARGS=$(getopt -o t:f:s:c:d: --long title:,footer:,size:,color: -- "$@")
 if [[ $? -ne 0 ]]; then
 	exit 1;
 fi
 eval set -- "$VALID_ARGS"
 
+# Test if value is in list
 function isInList {
 	local item="$1"
 	local list="$2"
@@ -25,7 +26,13 @@ function isInList {
 	return $result
 }
 
+# Create and return the github wikiname of a page or an anchor:
+# replace ' ' by '-' and '?' by ''
+function wikiname {
+	echo "$(</dev/stdin)" | sed -E 's/ /-/g' | sed -E 's/\?//g'
+}
 
+# Read args
 while [ : ]; do
 	case "$1" in
 		-t | --title)
@@ -37,7 +44,7 @@ while [ : ]; do
 			shift 2
 			;;
 		-s | --size)
-			if isInList "$2" "1 2 3"; then
+			if isInList "$2" '1 2 3'; then
 				size="$2"
 			fi
 			shift 2
@@ -47,38 +54,22 @@ while [ : ]; do
 			shift 2
 			;;
 		--) shift;
+			argc=$#
+			argv=("$@")
+			for (( j=0; j<argc; j++ )); do
+				menu+=("$(echo ${argv[j]} | wikiname)")
+				menuTitles+=("${argv[j]}") # storing untransformed titles for display
+			done
 			break
 			;;
 	esac
 done
 
+
 declare -a menu
 declare -a menuTitles
 declare -A menuIndex
 declare -A menuItems
-
-argc=$#
-argv=("$@")
-
-# Create and return the github wikiname of a page or an anchor:
-# replace ' ' by '-' and '?' by ''
-function wikiname {
-	if test -n "$1"; then
-		md="$1"
-	elif test ! -t 0; then
-		md="$(</dev/stdin)"
-	else
-		echo "No standard input." # this should not happen
-		exit 1
-	fi
-	echo "$md" | sed -E 's/ /-/g' | sed -E 's/\?//g'
-}
-
-
-for (( j=0; j<argc; j++ )); do
-	menu+=("$(echo ${argv[j]} | wikiname)")
-	menuTitles+=("${argv[j]}") # storing untransformed titles for display
-done
 
 len_menu="${#menu[@]}"
 if [ "$len_menu" = 0 ]; then
@@ -89,7 +80,6 @@ else
 		menuIndex["${menu[$i]}"]="1"
 	done
 fi
-
 
 # Read pages and find level 1 titles
 for file in *; do
