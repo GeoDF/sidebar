@@ -24,3 +24,4 @@ jobs:
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
         git tag -fa "${MAJOR}" -m 'Update major version tag'
         git push origin "${MAJOR}" --force
+        echo "$MAJOR -> $VERSION"
