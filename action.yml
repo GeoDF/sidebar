@@ -25,7 +25,6 @@ runs:
     - run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
 
     - name: Checkout Wiki
-      shell: bash
       uses: actions/checkout@v4
       with:
         repository: ${{github.repository}}.wiki
