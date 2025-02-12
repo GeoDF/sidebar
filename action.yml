@@ -1,0 +1,40 @@
+name: "Sidebar"
+run-name: ${{ github.actor }} Update wiki sidebar
+
+description: "Github Action for creating/updating a customized sidebar for Github wikis."
+author: "GeodF"
+
+branding:
+  color: "green"
+  icon: "package"
+
+inputs:
+  menu_title:
+    description: "Menu title"
+    required: false
+  size:
+    description: "Size"
+    required: false
+  color:
+    description: "Color"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: echo "🎉 job triggered by a ${{ github.event_name }} event on ${{ github.repository }}."
+
+    - name: Check runner OS
+      if: ${{ runner.os != 'Linux' }}
+      shell: bash
+
+      - name: Checkout Wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{github.repository}}.wiki
+
+      - name: Check
+        run: |
+          ls 
+
+
