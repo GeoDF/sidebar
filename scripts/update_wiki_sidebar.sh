@@ -4,9 +4,11 @@
 #
 # Usage: update_wiki_sidebar.sh [options] 'page1' 'page2' page3' ...'
 # where 'page1' is the name of a wiki page you want to put as first level menu item
-# exemple : update_wiki_sidebar.sh 'Install & run' 'Screenshots' 'FAQ'
+# exemple : update_wiki_sidebar.sh [options] 'Install & run' 'Screenshots' 'FAQ'
 #
-# if there is no pages as parameters, read pages from ".md" files not beginning by "_" in the working directory
+# if there is no pages as parameters, read pages from a hidden file saved by the first run
+# or from ".md" files not beginning by "_" in the working directory if the hidden file _last_menu_pages 
+# was not created
 
 VALID_ARGS=$(getopt -o t:f:s:c:d: --long title:,footer:,size:,color: -- "$@")
 if [[ $? -ne 0 ]]; then
@@ -57,7 +59,6 @@ while [ : ]; do
 			argc=$#
 			argv=("$@")
 			for (( j=0; j<argc; j++ )); do
-				menu+=("$(echo ${argv[j]} | wikiname)")
 				menuTitles+=("${argv[j]}") # storing untransformed titles for display
 			done
 			break
@@ -65,25 +66,44 @@ while [ : ]; do
 	esac
 done
 
-
 declare -a menu
-declare -a menuTitles
+declare -a menuTitles # desired menu titles, untransformed
 declare -A menuIndex
 declare -A menuItems
 
-len_menu="${#menu[@]}"
-if [ "$len_menu" = 0 ]; then
-	pick_all_files=true
-else
-	pick_all_files=false
-	for (( i=0; i<$len_menu; i++ )); do
-		menuIndex["${menu[$i]}"]="1"
-	done
+len_menuTitles="${#menuTitles[@]}"
+if [ "$len_menuTitles" = 0 ]; then
+	if [ -f '_last_menu_pages' ]; then
+		readarray -t menuTitles < _last_menu_pages
+	else
+		# Read all pages
+		for file in *; do
+			if [ ! "${file##*.}" = 'md' ] || [ "${file:0:1}" = '_' ] ; then
+				continue
+			fi
+			menuTitles+=("$(echo ${file%.*} | sed -e 's/-/ /g')")
+		done
+	fi
 fi
 
-# Read pages and find level 1 titles
+# Save the 1st level pages names in a hidden file
+printf "%s\n" "${menuTitles[@]}" > '_last_menu_pages'
+
+# Create menu index
+len_menuTitles="${#menuTitles[@]}"
+for (( i=0; i<$len_menuTitles; i++ )); do
+	page="$(echo ${menuTitles[$i]} | wikiname)"
+	menuIndex["$page"]="true"
+	menu+=("$page")
+done
+
+# Read requested pages and find level 1 titles
 for file in *; do
-	if [ ! "${file##*.}" = 'md' ] || [ "${file:0:1}" = '_' ]; then
+	if [ ! "${file##*.}" = 'md' ] || [ "${file:0:1}" = '_' ] ; then
+		continue
+	fi
+	page="${file%.*}"
+	if [ ! "${menuIndex[$page]}" ]; then
 		continue
 	fi
 	declare -a submenus=()
@@ -96,15 +116,7 @@ for file in *; do
 			submenus+=("'$line'")
 		fi
 	done < $file
-	page="${file%.*}"
-	if [ "${menuIndex[$page]}" ]; then
-		menuItems+=(["$page"]="${submenus[@]}")
-	fi
-	if $pick_all_files; then
-		menu+=("$page")
-		menuTitles+=("$(echo $page | sed -E 's/-/ /g')")
-		menuItems+=(["$page"]="${submenus[@]}")
-	fi
+	menuItems+=(["$page"]="${submenus[@]}")
 done
 
 rm_star1='s/(^|[^\\\*])\*([^\*]+)\*([^\*]|$)/\1\2\3/g'
@@ -117,7 +129,6 @@ function removeMD {
 
 function submenu {
 	# format an anchor in the github wiki format
-	# anchor="$(removeMD $2 | tr '[:upper:]' '[:lower:]' | sed -E 's/ /-/g' | sed -E 's/\?//g')"
 	anchor="$(removeMD $2 | tr '[:upper:]' '[:lower:]' | wikiname)"
 	link="$1#$anchor"
 	echo "- [$2]($link)"
@@ -127,7 +138,7 @@ if [ "$title" ]; then
 	echo "$title"
 fi
 len_menu="${#menu[@]}"
-if [ $len_menu > 0 ]; then
+if [ $len_menu -gt 0 ]; then
 	if [ "$size" ]; then
 		echo "<h$size>"
 	fi
@@ -138,11 +149,11 @@ if [ $len_menu > 0 ]; then
 		if [ "$subs" ]; then
 			len_subs="${#subs[@]}"
 			echo "<details><summary>[[${menuTitles[$i]}]]</summary>"
-			echo ''
+			echo
 			for (( j=0; j<$len_subs; j++ )); do
 				submenu "$item" "${subs[$j]}"
 			done
-			echo ''
+			echo
 			echo "</details>"
 		else
 			echo "- [[${menuTitles[$i]}]]"
@@ -152,7 +163,7 @@ if [ $len_menu > 0 ]; then
 		echo "</h$size>"
 	fi
 else
-	echo "Empty wiki."
+	echo "Empty wiki"
 fi
 if [ "$footer" ]; then
 	echo "$footer"
