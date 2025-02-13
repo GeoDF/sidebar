@@ -122,9 +122,19 @@ done
 rm_star1='s/(^|[^\\\*])\*([^\*]+)\*([^\*]|$)/\1\2\3/g'
 rm_star2='s/(^|[^\\\*])\*{2}([^\*]+)\*{2}([^\*]|$)/\1\2\3/g'
 rm_star3='s/(^|[^\\\*])\*{3}([^\*]+)\*{3}([^\*]|$)/\1\2\3/g'
+rm_underscore1='s/(^|[^\\_])_([^_]+)_([^_]|$)/\1\2\3/g'
+rm_underscore2='s/(^|[^\\_])_{2}([^\_]+)_{2}([^_]|$)/\1\2\3/g'
+rm_underscore3='s/(^|[^\\_])_{3}([^_]+)_{3}([^_]|$)/\1\2\3/g'
 
+# Remove some markdown
 function removeMD {
-	echo "$1" | sed -E $rm_star1 | sed -E $rm_star2 | sed -E $rm_star3
+	echo "$1" | \
+		sed -E $rm_star1 | \
+		sed -E $rm_star2 | \
+		sed -E $rm_star3 | \
+		sed -E $rm_underscore1 | \
+		sed -E $rm_underscore2 | \
+		sed -E $rm_underscore3
 }
 
 FORMAT_MENU='<details><summary>[[%s]]</summary>\n\n%s\n\n</details>'
