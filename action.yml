@@ -52,7 +52,7 @@ runs:
         --footer="${{ inputs.menu_footer }}" \
         --size="${{ inputs.menu_size }}" \
         --color="${{ inputs.menu_color }}" \
-        "${{ inputs.menu_pages }}" > _Sidebar.md
+        ${{ inputs.menu_pages }} > _Sidebar.md
         
     - name: Debug
       shell: bash
