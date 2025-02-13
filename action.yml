@@ -9,21 +9,21 @@ branding:
   icon: "package"
 
 inputs:
-	menu_title:
-	  description: "Menu title"
-	  required: false
-	menu_pages:
-	  description: "Menu pages (1st level). Default: your previous list."
-	  required: false
-	menu_size:
-	  description: "Size: 1, 2, 3, 4, or 5."
-	  required: false
-	menu_color:
-	  description: "Color (not implemented)"
-	  required: false
-	menu_footer:
-	  description: "Menu footer"
-	  required: false
+  menu_title:
+    description: "Menu title"
+    required: false
+  menu_pages:
+    description: "Menu pages (1st level). Default: your previous list."
+    required: false
+  menu_size:
+    description: "Size: 1, 2, 3, 4, or 5."
+    required: false
+  menu_color:
+    description: "Color (not implemented)"
+    required: false
+  menu_footer:
+    description: "Menu footer"
+    required: false
 
 runs:
   using: "composite"
