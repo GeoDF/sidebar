@@ -53,6 +53,14 @@ runs:
         --size="${{ inputs.menu_size }}" \
         --color="${{ inputs.menu_color }}" \
         "${{ inputs.menu_pages }}" > _Sidebar.md
+        
+    - name: Debug
+      shell: bash
+      run: |
+        ls
+        cat _last_menu_pages
+        cat _Sidebar.md
+
 
     - name: Commit the updated sidebar
       shell: bash
