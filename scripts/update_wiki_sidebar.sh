@@ -127,11 +127,13 @@ function removeMD {
 	echo "$1" | sed -E $rm_star1 | sed -E $rm_star2 | sed -E $rm_star3
 }
 
+FORMAT_MENU='<details><summary>[[%s]]</summary>\n\n%s\n\n</details>'
+FORMAT_SUBMENU='- %s\n'
 function submenu {
 	# format an anchor in the github wiki format
 	anchor="$(removeMD $2 | tr '[:upper:]' '[:lower:]' | wikiname)"
 	link="$1#$anchor"
-	echo "- [$2]($link)"
+	printf -- $FORMAT_SUBMENU "[$2]($link)"
 } 
 
 [ "$title" ] && echo "$title"
@@ -140,17 +142,14 @@ if [ $len_menu -gt 0 ]; then
 	[ "$size" ] && echo "<h$size>"
 	for (( i=0; i<$len_menu; i++ )); do
 		item="${menu[$i]}"
-		submenus="${menuItems[$item]}"
-		IFS=$'\n' subs=( $(xargs -n1 <<<"$submenus") )
+		IFS=$'\n' subs=( $(xargs -n1 <<<"${menuItems[$item]}") )
 		if [ "$subs" ]; then
 			len_subs="${#subs[@]}"
-			echo "<details><summary>[[${menuTitles[$i]}]]</summary>"
-			echo
+			submenus=$(
 			for (( j=0; j<$len_subs; j++ )); do
 				submenu "$item" "${subs[$j]}"
-			done
-			echo
-			echo "</details>"
+			done)
+			printf $FORMAT_MENU "${menuTitles[$i]}" "$submenus"
 		else
 			echo "- [[${menuTitles[$i]}]]"
 		fi
