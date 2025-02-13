@@ -46,7 +46,7 @@ while [ : ]; do
 			shift 2
 			;;
 		-s | --size)
-			if isInList "$2" '1 2 3'; then
+			if isInList "$2" '1 2 3 4 5'; then
 				size="$2"
 			fi
 			shift 2
@@ -134,14 +134,10 @@ function submenu {
 	echo "- [$2]($link)"
 } 
 
-if [ "$title" ]; then
-	echo "$title"
-fi
+[ "$title" ] && echo "$title"
 len_menu="${#menu[@]}"
 if [ $len_menu -gt 0 ]; then
-	if [ "$size" ]; then
-		echo "<h$size>"
-	fi
+	[ "$size" ] && echo "<h$size>"
 	for (( i=0; i<$len_menu; i++ )); do
 		item="${menu[$i]}"
 		submenus="${menuItems[$item]}"
@@ -159,14 +155,10 @@ if [ $len_menu -gt 0 ]; then
 			echo "- [[${menuTitles[$i]}]]"
 		fi
 	done
-	if [ "$size" ]; then
-		echo "</h$size>"
-	fi
+	[ "$size" ] && echo "</h$size>"
 else
 	echo "Empty wiki"
 fi
-if [ "$footer" ]; then
-	echo "$footer"
-fi
+[ "$footer" ] && echo "$footer"
 
 
