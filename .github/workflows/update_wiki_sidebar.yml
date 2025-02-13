@@ -1,0 +1,43 @@
+name: Update wiki sidebar
+run-name: ${{ github.actor }} update wiki sidebar
+
+on: 
+  workflow_dispatch:
+    inputs:
+      menu_title:
+        description: "Menu title"
+        required: false
+      menu_pages:
+        description: "Menu pages (1st level). Default: your previous list."
+        required: false
+      menu_size:
+        description: "Size: 1, 2, 3, 4, or 5. Default: 3"
+        required: false
+      menu_color:
+        description: "Color (not implemented)"
+        required: false
+      menu_footer:
+        description: "Menu footer"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  Update-Wiki-Sidebar:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 job triggered by a ${{ github.event_name }} event."
+      - run: echo "🔎 Updating wiki sidebar for ${{ github.ref }} of ${{ github.repository }}."
+  
+      - name: Update Wiki
+        uses: GeodF/sidebar@v0
+        with:
+          menu_title: "${{ inputs.menu_title }}"
+          menu_pages: "${{ inputs.menu_pages }}"
+          menu_footer: "${{ inputs.menu_footer }}"
+          menu_size: "${{ inputs.menu_size }}"
+          menu_color: "${{ inputs.menu_color }}"
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
