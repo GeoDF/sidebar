@@ -3,6 +3,8 @@ run-name: ${{ github.actor }} Update dev version tag
 
 on:
   push:
+    tags-ignore:
+      - '**'
     branches:
       - main
     paths:
@@ -18,9 +20,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checking
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Update tag to the last commit
       run: |
-        echo "github.actor             : ${{ github.actor }}"
-        echo "github.event_name        : ${{ github.event_name }}"
-        echo "github.event.pusher.name : ${{ github.event.pusher.name }}"
-          
+        git config user.name "$(git log -n 1 --pretty=format:%an)"
+        git config user.email "$(git log -n 1 --pretty=format:%ae)"
+        git tag -fa "dev" -m 'Update dev version tag'
+        git push origin "dev" --force
+
