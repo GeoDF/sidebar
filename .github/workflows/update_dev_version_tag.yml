@@ -9,8 +9,6 @@ on:
       - main
     paths:
       - 'scripts/**'
-  
-  workflow_dispatch:
 
 permissions:
   contents: write
