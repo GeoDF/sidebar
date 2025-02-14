@@ -1,0 +1,27 @@
+name: Update Development Version Tag
+run-name: ${{ github.actor }} Update dev version tag
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+  
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update_major_version_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check
+        run: |
+          echo "github.actor             : ${{ github.actor }}"
+          echo "github-actions[bot]      : ${{ github-actions[bot] }}"
+          echo "github.event_name        : ${{ github.event_name }}"
+          echo "github.event.pusher.name : ${{ github.event.pusher.name  }}"
+          
