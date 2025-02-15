@@ -5,16 +5,16 @@ on:
   workflow_dispatch:
     inputs:
       menu_title:
-        description: "Menu title"
+        description: "Title"
         required: false
       menu_pages:
-        description: "Menu pages (1st level). Default: your previous list."
+        description: "Pages (1st level). Default: your previous list."
         required: false
       menu_footer:
-        description: "Menu footer"
+        description: "Footer"
         required: false
       menu_opened:
-        description: "Menus opened ?"
+        description: "Opened ?"
         required: false
         type: boolean
       menu_size:
