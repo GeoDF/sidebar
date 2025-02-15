@@ -158,54 +158,55 @@ function draw_submenu {
 } 
 
 # Write menu
-[ "$title" ] && echo "$title"
-len_menu="${#menu[@]}"
-if [ $len_menu -gt 0 ]; then
-	[ "$size" ] && echo "<h$size>"
-	for (( i=0; i<$len_menu; i++ )); do
-		# defaults options for this menu item
-		[ "$opened" ] && open=' open' || open=''
-
-		item="${menu[$i]}"
-		# Process options
-		if [ "${menuOptions[$item]}" ]; then
-			declare -A options=()
-			options_string="${menuOptions[$item]}"
-			while [[ $options_string =~ $OPTIONS_REGEX ]]; do
-				opt="${BASH_REMATCH[1]}"
-				options["${opt%=*}"]="${opt#*=}"
-				options_string="${options_string##*${opt}_|}"
-			done
-			for option_name in ${!options[@]}; do
-				value="${options[$option_name]}"
-				case $option_name in
-					'open')
-						open=' open'
-					;;
-					'close')
-						open=''
-					;;
-				esac
-			done
-		fi
-		# Process submenus
-		IFS=$'\n' subs=( $(xargs -n1 <<<"${menuItems[$item]}") )
-		if [ "$subs" ]; then
-			len_subs="${#subs[@]}"
-			submenus=$(
-				for (( j=0; j<$len_subs; j++ )); do
-					draw_submenu "$item" "${subs[$j]}"
+echo "$(
+	[ "$title" ] && echo "$title"
+	len_menu="${#menu[@]}"
+	if [ $len_menu -gt 0 ]; then
+		[ "$size" ] && echo "<h$size>"
+		for (( i=0; i<$len_menu; i++ )); do
+			# defaults options for this menu item
+			[ "$opened" ] && open=' open' || open=''
+	
+			item="${menu[$i]}"
+			# Process options
+			if [ "${menuOptions[$item]}" ]; then
+				declare -A options=()
+				options_string="${menuOptions[$item]}"
+				while [[ $options_string =~ $OPTIONS_REGEX ]]; do
+					opt="${BASH_REMATCH[1]}"
+					options["${opt%=*}"]="${opt#*=}"
+					options_string="${options_string##*${opt}_|}"
 				done
-			)
-			draw_menu "${menuTitles[$i]}" "$submenus" "$open"
-		else
-			echo "- [[${menuTitles[$i]}]]"
-		fi
-	done
-	[ "$size" ] && echo "</h$size>"
-else
-	echo "Empty wiki"
-fi
-[ "$footer" ] && echo "$footer"
-
+				for option_name in ${!options[@]}; do
+					value="${options[$option_name]}"
+					case $option_name in
+						'open')
+							open=' open'
+						;;
+						'close')
+							open=''
+						;;
+					esac
+				done
+			fi
+			# Process submenus
+			IFS=$'\n' subs=( $(xargs -n1 <<<"${menuItems[$item]}") )
+			if [ "$subs" ]; then
+				len_subs="${#subs[@]}"
+				submenus=$(
+					for (( j=0; j<$len_subs; j++ )); do
+						draw_submenu "$item" "${subs[$j]}"
+					done
+				)
+				draw_menu "${menuTitles[$i]}" "$submenus" "$open"
+			else
+				echo "- [[${menuTitles[$i]}]]"
+			fi
+		done
+		[ "$size" ] && echo "</h$size>"
+	else
+		echo "Empty wiki"
+	fi
+	[ "$footer" ] && echo "$footer"
+)" > _Sidebar.md
 

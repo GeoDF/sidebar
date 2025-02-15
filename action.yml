@@ -56,7 +56,7 @@ runs:
         --footer="${{ inputs.menu_footer }}" \
         --opened="${{ inputs.menu_opened }}" \
         --size="${{ inputs.menu_size }}" \
-        ${{ inputs.menu_pages }} > _Sidebar.md
+        ${{ inputs.menu_pages }}
 
     - name: Commit the updated sidebar
       shell: bash
