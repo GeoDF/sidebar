@@ -8,9 +8,9 @@
 #
 # if there is no pages as parameters, read pages from a hidden file saved by the first run
 # or from ".md" files not beginning by "_" in the working directory if the hidden file _last_menu_pages 
-# was not created
+# was not created before
 
-VALID_ARGS=$(getopt -o t:f:s:c:d: --long title:,footer:,size:,color: -- "$@")
+VALID_ARGS=$(getopt -o t:f:o:s:c:d: --long title:,footer:,opened:,size:,color: -- "$@")
 if [[ $? -ne 0 ]]; then
 	exit 1;
 fi
@@ -45,6 +45,10 @@ while [ : ]; do
 			footer="$2"
 			shift 2
 			;;
+		-o | --opened)
+			opened="$2"
+			shift 2
+			;;
 		-s | --size)
 			if isInList "$2" '1 2 3 4 5'; then
 				size="$2"
@@ -68,6 +72,7 @@ done
 
 declare -a menu
 declare -a menuTitles # desired menu titles, untransformed
+declare -A menuOptions
 declare -A menuIndex
 declare -A menuItems
 
@@ -86,12 +91,19 @@ if [ "$len_menuTitles" = 0 ]; then
 	fi
 fi
 
-# Save the 1st level pages names in a hidden file
+# Save the 1st level pages names and global options (TODO) in a hidden file
 printf "%s\n" "${menuTitles[@]}" > '_last_menu_pages'
 
-# Create menu index
+OPTIONS_REGEX='¤_([^_][^¤]+)_¤'
+# Create menu index and extract options
 len_menuTitles="${#menuTitles[@]}"
 for (( i=0; i<$len_menuTitles; i++ )); do
+	if [[ ${menuTitles[$i]} =~ $OPTIONS_REGEX ]]; then
+		m_title="${menuTitles[$i]%%¤_*}"
+		page=$(echo "$m_title" | wikiname)
+		menuOptions["$page"]="¤_${menuTitles[$i]#*¤_}" # store all menu options
+		menuTitles[$i]="$m_title"
+	fi
 	page="$(echo ${menuTitles[$i]} | wikiname)"
 	menuIndex["$page"]="true"
 	menu+=("$page")
@@ -137,29 +149,62 @@ function removeMD {
 		sed -E $rm_underscore3
 }
 
-FORMAT_MENU='<details><summary>[[%s]]</summary>\n\n%s\n\n</details>'
+FORMAT_MENU='<details%s><summary>[[%s]]</summary>\n\n%s\n\n</details>\n'
 FORMAT_SUBMENU='- %s\n'
-function submenu {
+function draw_menu {
+	printf $FORMAT_MENU "$3" "$1" "$2"
+}
+function draw_submenu {
 	# format an anchor in the github wiki format
 	anchor="$(removeMD $2 | tr '[:upper:]' '[:lower:]' | wikiname)"
 	link="$1#$anchor"
 	printf -- $FORMAT_SUBMENU "[$2]($link)"
 } 
 
+# Write menu
 [ "$title" ] && echo "$title"
 len_menu="${#menu[@]}"
 if [ $len_menu -gt 0 ]; then
 	[ "$size" ] && echo "<h$size>"
 	for (( i=0; i<$len_menu; i++ )); do
+		# defaults options for this menu item
+		[ "$opened" ] && open=' open' || open=''
+
 		item="${menu[$i]}"
+		# Process options
+		if [ "${menuOptions[$item]}" ]; then
+			declare -A options=()
+			options_string="${menuOptions[$item]}"
+			while [[ $options_string =~ $OPTIONS_REGEX ]]; do
+				opt="${BASH_REMATCH[1]}"
+				options["${opt%=*}"]="${opt#*=}"
+				options_string="${options_string##*${opt}_¤}"
+			done
+			for option_name in ${!options[@]}; do
+				value="${options[$option_name]}"
+				case $option_name in
+					'open')
+						open=' open'
+					;;
+					'close')
+						open=''
+					;;
+					'color')
+						# TODO
+					;;
+				esac
+			done
+		fi
+		# Process submenus
 		IFS=$'\n' subs=( $(xargs -n1 <<<"${menuItems[$item]}") )
 		if [ "$subs" ]; then
 			len_subs="${#subs[@]}"
 			submenus=$(
-			for (( j=0; j<$len_subs; j++ )); do
-				submenu "$item" "${subs[$j]}"
-			done)
-			printf $FORMAT_MENU "${menuTitles[$i]}" "$submenus"
+				for (( j=0; j<$len_subs; j++ )); do
+					draw_submenu "$item" "${subs[$j]}"
+				done
+			)
+			draw_menu "${menuTitles[$i]}" "$submenus" "$open"
 		else
 			echo "- [[${menuTitles[$i]}]]"
 		fi

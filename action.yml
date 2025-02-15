@@ -1,12 +1,12 @@
 name: "Sidebar"
 run-name: Update wiki sidebar
 
-description: "Github Action for creating/updating a customized sidebar for Github wikis."
+description: "Create/update a customized sidebar for Github wiki."
 author: "GeodF"
 
 branding:
   color: "green"
-  icon: "package"
+  icon: "menu"
 
 inputs:
   menu_title:
@@ -15,14 +15,18 @@ inputs:
   menu_pages:
     description: "Menu pages (1st level). Default: your previous list."
     required: false
+  menu_footer:
+    description: "Menu footer"
+    required: false
+  menu_opened:
+    description: "Menus opened ?"
+    required: false
+    type: boolean
   menu_size:
     description: "Size: 1, 2, 3, 4, or 5."
     required: false
   menu_color:
     description: "Color (not implemented)"
-    required: false
-  menu_footer:
-    description: "Menu footer"
     required: false
 
 runs:
@@ -50,6 +54,7 @@ runs:
         ${GITHUB_ACTION_PATH}/scripts/update_wiki_sidebar.sh \
         --title="${{ inputs.menu_title }}" \
         --footer="${{ inputs.menu_footer }}" \
+        --opened="${{ inputs.menu_opened }}" \
         --size="${{ inputs.menu_size }}" \
         --color="${{ inputs.menu_color }}" \
         ${{ inputs.menu_pages }} > _Sidebar.md
