@@ -10,7 +10,7 @@
 # or from ".md" files not beginning by "_" in the working directory if the hidden file _last_menu_pages 
 # was not created before
 
-VALID_ARGS=$(getopt -o t:f:o:s:c:d: --long title:,footer:,opened:,size:,color: -- "$@")
+VALID_ARGS=$(getopt -o t:f:o:s:d: --long title:,footer:,opened:,size: -- "$@")
 if [[ $? -ne 0 ]]; then
 	exit 1;
 fi
@@ -53,10 +53,6 @@ while [ : ]; do
 			if isInList "$2" '1 2 3 4 5'; then
 				size="$2"
 			fi
-			shift 2
-			;;
-		-c | --color)
-			color="$2"
 			shift 2
 			;;
 		--) shift;
@@ -188,9 +184,6 @@ if [ $len_menu -gt 0 ]; then
 					;;
 					'close')
 						open=''
-					;;
-					'color')
-						# TODO
 					;;
 				esac
 			done

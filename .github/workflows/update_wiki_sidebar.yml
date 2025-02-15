@@ -20,9 +20,6 @@ on:
       menu_size:
         description: "Size: 1, 2, 3, 4, or 5."
         required: false
-      menu_color:
-        description: "Color (not implemented)"
-        required: false
 
 permissions:
   contents: write
@@ -40,8 +37,9 @@ jobs:
           menu_title: "${{ inputs.menu_title }}"
           menu_pages: "${{ inputs.menu_pages }}"
           menu_footer: "${{ inputs.menu_footer }}"
+          menu_opened: "${{ inputs.menu_opened }}"
           menu_size: "${{ inputs.menu_size }}"
-          menu_color: "${{ inputs.menu_color }}"
+
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 

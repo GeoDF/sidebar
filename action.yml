@@ -25,9 +25,6 @@ inputs:
   menu_size:
     description: "Size: 1, 2, 3, 4, or 5."
     required: false
-  menu_color:
-    description: "Color (not implemented)"
-    required: false
 
 runs:
   using: "composite"
@@ -59,7 +56,6 @@ runs:
         --footer="${{ inputs.menu_footer }}" \
         --opened="${{ inputs.menu_opened }}" \
         --size="${{ inputs.menu_size }}" \
-        --color="${{ inputs.menu_color }}" \
         ${{ inputs.menu_pages }} > _Sidebar.md
 
     - name: Commit the updated sidebar
