@@ -90,14 +90,14 @@ fi
 # Save the 1st level pages names and global options (TODO) in a hidden file
 printf "%s\n" "${menuTitles[@]}" > '_last_menu_pages'
 
-OPTIONS_REGEX='¤_([^_][^¤]+)_¤'
+OPTIONS_REGEX='\|_([^_][^|]+)_\|'
 # Create menu index and extract options
 len_menuTitles="${#menuTitles[@]}"
 for (( i=0; i<$len_menuTitles; i++ )); do
 	if [[ ${menuTitles[$i]} =~ $OPTIONS_REGEX ]]; then
-		m_title="${menuTitles[$i]%%¤_*}"
+		m_title="${menuTitles[$i]%%|_*}"
 		page=$(echo "$m_title" | wikiname)
-		menuOptions["$page"]="¤_${menuTitles[$i]#*¤_}" # store all menu options
+		menuOptions["$page"]="|_${menuTitles[$i]#*|_}" # store all menu options
 		menuTitles[$i]="$m_title"
 	fi
 	page="$(echo ${menuTitles[$i]} | wikiname)"
@@ -174,7 +174,7 @@ if [ $len_menu -gt 0 ]; then
 			while [[ $options_string =~ $OPTIONS_REGEX ]]; do
 				opt="${BASH_REMATCH[1]}"
 				options["${opt%=*}"]="${opt#*=}"
-				options_string="${options_string##*${opt}_¤}"
+				options_string="${options_string##*${opt}_|}"
 			done
 			for option_name in ${!options[@]}; do
 				value="${options[$option_name]}"
