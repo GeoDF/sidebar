@@ -44,12 +44,15 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
         
     - name: Checkout Wiki
+      id: checkout
       uses: actions/checkout@v4
       with:
         repository: ${{github.repository}}.wiki
 
     - name: Update sidebar
+      id: update_sidebar
       shell: bash
+      if: steps.checkout.outcome == 'success'
       run: |
         ${GITHUB_ACTION_PATH}/scripts/update_wiki_sidebar.sh \
         --title="${{ inputs.menu_title }}" \
@@ -58,17 +61,10 @@ runs:
         --size="${{ inputs.menu_size }}" \
         --color="${{ inputs.menu_color }}" \
         ${{ inputs.menu_pages }} > _Sidebar.md
-        
-    - name: Debug
-      shell: bash
-      run: |
-        ls
-        cat _last_menu_pages
-        cat _Sidebar.md
-
 
     - name: Commit the updated sidebar
       shell: bash
+      if: steps.update_sidebar.outcome == 'success'
       run: |
         git config user.name "$(git log -n 1 --pretty=format:%an)"
         git config user.email "$(git log -n 1 --pretty=format:%ae)"
