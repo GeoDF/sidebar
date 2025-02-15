@@ -1,4 +1,4 @@
 # sidebar
 Github action to create or update a customized sidebar in your Github wiki.
 
-(work in progress...)
+See [the project's wiki](GeodF/sidebar/wiki/).
