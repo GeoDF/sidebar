@@ -165,7 +165,7 @@ echo "$(
 		[ "$size" ] && echo "<h$size>"
 		for (( i=0; i<$len_menu; i++ )); do
 			# defaults options for this menu item
-			[ "$opened" ] && open=' open' || open=''
+			[ "$opened" == 'true' ] && open=' open' || open=''
 	
 			item="${menu[$i]}"
 			# Process options
