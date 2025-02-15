@@ -200,7 +200,7 @@ echo "$(
 				)
 				draw_menu "${menuTitles[$i]}" "$submenus" "$open"
 			else
-				echo "- [[${menuTitles[$i]}]]"
+				draw_menu "${menuTitles[$i]}" "" " open"
 			fi
 		done
 		[ "$size" ] && echo "</h$size>"
