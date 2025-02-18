@@ -1,4 +1,4 @@
-name: "Sidebar"
+name: "Sidebar menu"
 run-name: Update wiki sidebar
 
 description: "Create/update a customized sidebar for Github wiki."
