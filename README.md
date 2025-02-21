@@ -1,5 +1,5 @@
 # sidebar
-Github action to create or update a customized sidebar in your Github wiki.
+Github action to create or update a customized **_Sidebar.md** in your Github wiki.
 
 See [the project's wiki](https://github.com/GeoDF/sidebar/wiki).
 
